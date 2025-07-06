@@ -5,7 +5,15 @@ import { useAppStore } from '@/stores/app'
 import { useSkyFlowStore } from '@/stores/skyflow'
 import ChatInterface from '@/components/ChatInterface.vue'
 import TripPlanning from '@/components/TripPlanning.vue'
-import { ArrowLeft, Plane, AlertTriangle, Clock } from 'lucide-vue-next'
+import {
+  ArrowLeft,
+  Plane,
+  AlertTriangle,
+  Clock,
+  Sparkles,
+  MessageSquare,
+  MapPin,
+} from 'lucide-vue-next'
 
 const router = useRouter()
 const appStore = useAppStore()
@@ -17,7 +25,6 @@ const currentTrip = computed(() => skyflowStore.currentTrip)
 const tripHistory = computed(() => skyflowStore.tripHistory)
 
 onMounted(() => {
-  // Add welcome message if no messages exist for SkyFlow
   if (appStore.messages.length === 0) {
     appStore.addMessage({
       id: Date.now().toString(),
@@ -38,7 +45,6 @@ const handleSendMessage = (message: string, type: 'text' | 'voice' = 'text') => 
     type,
   })
 
-  // Simulate AI response
   setTimeout(() => {
     let response = ''
 
@@ -46,7 +52,6 @@ const handleSendMessage = (message: string, type: 'text' | 'voice' = 'text') => 
       response =
         "Great! I found flights to London starting from $450. For a 3-stop European trip, I recommend London → Paris → Amsterdam. ⚠️ Visa Alert: You'll need a UK visa and Schengen visa. Would you like me to show you the complete itinerary with hotels?"
 
-      // Create a sample trip
       skyflowStore.createTrip({
         id: Date.now().toString(),
         destination: 'London, Paris, Amsterdam',
@@ -97,76 +102,114 @@ const handleSendMessage = (message: string, type: 'text' | 'voice' = 'text') => 
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div
+    class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative overflow-hidden"
+  >
+    <!-- Animated background -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+      <div
+        class="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-indigo-600/20 rounded-full blur-3xl float"
+      ></div>
+      <div
+        class="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-cyan-400/20 to-blue-600/20 rounded-full blur-3xl float"
+        style="animation-delay: -3s"
+      ></div>
+    </div>
+
     <!-- Header -->
-    <header class="bg-white shadow-sm border-b">
+    <header class="glass sticky top-0 z-50 border-b border-white/20">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center h-16">
-          <button @click="router.push('/')" class="p-2 rounded-full hover:bg-gray-100 mr-4">
-            <ArrowLeft class="w-6 h-6 text-gray-600" />
+          <button
+            @click="router.push('/')"
+            class="p-2.5 rounded-xl hover:bg-white/50 transition-all duration-300 mr-4 group"
+          >
+            <ArrowLeft class="w-5 h-5 text-slate-600 group-hover:text-slate-800" />
           </button>
           <div class="flex items-center space-x-3">
-            <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-              <Plane class="w-5 h-5 text-blue-600" />
+            <div
+              class="w-10 h-10 bg-gradient-to-br from-blue-400 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg"
+            >
+              <Plane class="w-5 h-5 text-white" />
             </div>
-            <h1 class="text-xl font-bold text-gray-900">SkyFlow</h1>
+            <div>
+              <h1 class="text-xl font-bold text-slate-900">SkyFlow</h1>
+              <p class="text-xs text-slate-500">Travel & Flight AI</p>
+            </div>
+          </div>
+          <div class="ml-auto">
+            <Sparkles class="w-5 h-5 text-slate-400" />
           </div>
         </div>
       </div>
     </header>
 
     <!-- Tabs -->
-    <div class="bg-white border-b">
+    <div class="glass border-b border-white/10 sticky top-16 z-40">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <nav class="flex space-x-8">
           <button
             @click="activeTab = 'chat'"
             :class="[
-              'py-4 px-1 border-b-2 font-medium text-sm transition-colors',
+              'py-4 px-1 border-b-2 font-medium text-sm transition-all duration-300 flex items-center space-x-2',
               activeTab === 'chat'
                 ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
+                : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300',
             ]"
           >
-            Chat & Plan
+            <MessageSquare class="w-4 h-4" />
+            <span>Chat & Plan</span>
           </button>
           <button
             @click="activeTab = 'trips'"
             :class="[
-              'py-4 px-1 border-b-2 font-medium text-sm transition-colors',
+              'py-4 px-1 border-b-2 font-medium text-sm transition-all duration-300 flex items-center space-x-2',
               activeTab === 'trips'
                 ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
+                : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300',
             ]"
           >
-            Trip Planning
+            <MapPin class="w-4 h-4" />
+            <span>Trip Planning</span>
           </button>
         </nav>
       </div>
     </div>
 
     <!-- Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
       <!-- Chat Tab -->
-      <div v-if="activeTab === 'chat'" class="space-y-6">
+      <div v-if="activeTab === 'chat'" class="space-y-8">
         <!-- Current Trip Summary -->
-        <div v-if="currentTrip" class="bg-white rounded-xl shadow-sm border p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">Current Trip</h3>
-          <div class="flex items-center justify-between">
+        <div v-if="currentTrip" class="glass rounded-3xl shadow-xl border border-white/20 p-8">
+          <div class="flex items-center space-x-3 mb-6">
+            <div class="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
+            <h3 class="text-xl font-bold text-slate-900">Current Trip</h3>
+          </div>
+
+          <div class="flex items-center justify-between mb-6">
             <div class="flex items-center space-x-4">
-              <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Plane class="w-6 h-6 text-blue-600" />
+              <div
+                class="w-16 h-16 bg-gradient-to-br from-blue-400 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg"
+              >
+                <Plane class="w-8 h-8 text-white" />
               </div>
               <div>
-                <p class="font-medium text-gray-900">{{ currentTrip.destination }}</p>
-                <p class="text-sm text-gray-500">Trip #{{ currentTrip.id.slice(-6) }}</p>
+                <p class="font-bold text-slate-900 text-lg">{{ currentTrip.destination }}</p>
+                <p class="text-sm text-slate-500">Trip #{{ currentTrip.id.slice(-6) }}</p>
+                <div class="flex items-center mt-1">
+                  <div class="w-2 h-2 bg-blue-400 rounded-full mr-2"></div>
+                  <span class="text-xs text-blue-600 font-medium capitalize">{{
+                    currentTrip.status
+                  }}</span>
+                </div>
               </div>
             </div>
             <div class="text-right">
-              <p class="font-semibold text-gray-900">
+              <p class="font-bold text-slate-900 text-xl">
                 ${{ currentTrip.totalCost.toLocaleString() }}
               </p>
-              <div class="flex items-center text-sm text-gray-500">
+              <div class="flex items-center text-sm text-slate-500 mt-1">
                 <Clock class="w-4 h-4 mr-1" />
                 {{ currentTrip.departureDate }}
               </div>
@@ -176,13 +219,13 @@ const handleSendMessage = (message: string, type: 'text' | 'voice' = 'text') => 
           <!-- Visa Warnings -->
           <div
             v-if="currentTrip.visaRequired && currentTrip.visaRequired.length > 0"
-            class="mt-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200"
+            class="p-4 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-2xl border border-yellow-200/50"
           >
-            <div class="flex items-center">
+            <div class="flex items-center mb-2">
               <AlertTriangle class="w-5 h-5 text-yellow-600 mr-2" />
-              <span class="text-sm font-medium text-yellow-800">Visa Required:</span>
+              <span class="text-sm font-bold text-yellow-800">Visa Requirements</span>
             </div>
-            <p class="text-sm text-yellow-700 mt-1">
+            <p class="text-sm text-yellow-700">
               {{ currentTrip.visaRequired.join(', ') }}
             </p>
           </div>

@@ -2,6 +2,53 @@
 import { ref } from 'vue'
 import { Plane, MapPin, Calendar, DollarSign, AlertTriangle, Hotel, Clock } from 'lucide-vue-next'
 
+interface TripStop {
+  city: string
+  country: string
+  duration: number
+}
+
+interface Trip {
+  id: string
+  destination: string
+  departureDate: string
+  returnDate: string
+  stops: TripStop[]
+  totalCost: number
+  status: 'planning' | 'booked' | 'completed' | 'cancelled'
+  visaRequired?: string[]
+  flightDetails?: {
+    outbound: {
+      airline: string
+      flight: string
+      departure: string
+      arrival: string
+      from: string
+      to: string
+      duration: string
+      price: number
+    }
+    return: {
+      airline: string
+      flight: string
+      departure: string
+      arrival: string
+      from: string
+      to: string
+      duration: string
+      price: number
+    }
+  }
+  hotelDetails?: HotelDetail[]
+}
+
+interface Props {
+  currentTrip: Trip | null
+  tripHistory: Trip[]
+}
+
+const props = defineProps<Props>()
+
 const showFlightDetails = ref(false)
 const showHotelDetails = ref(false)
 
@@ -273,7 +320,7 @@ const mockHotelDetails = [
     <div class="bg-white rounded-2xl shadow-sm border p-6">
       <h2 class="text-xl font-bold text-gray-900 mb-6">Trip History</h2>
 
-      <div v-if="tripHistory.length === 0" class="text-center py-8">
+      <div v-if="props.tripHistory.length === 0" class="text-center py-8">
         <div
           class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4"
         >
@@ -284,7 +331,7 @@ const mockHotelDetails = [
 
       <div v-else class="space-y-4">
         <div
-          v-for="trip in tripHistory"
+          v-for="trip in props.tripHistory"
           :key="trip.id"
           class="border border-gray-200 rounded-xl p-4 hover:bg-gray-50 transition-colors"
         >
